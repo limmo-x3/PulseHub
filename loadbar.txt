@@ -1,0 +1,138 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local totalTime = 40
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "PulseHubLoader"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.Parent = PlayerGui
+
+-- Фон
+local Background = Instance.new("Frame")
+Background.Size = UDim2.new(1,0,1,0)
+Background.BackgroundColor3 = Color3.fromRGB(15,0,0)
+Background.BorderSizePixel = 0
+Background.Parent = ScreenGui
+
+-- Темно-красный градиент
+local Gradient = Instance.new("UIGradient")
+Gradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(10,0,0)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(60,0,0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(120,0,0))
+})
+Gradient.Rotation = 45
+Gradient.Parent = Background
+
+-- Название
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1,0,0,60)
+Title.Position = UDim2.new(0,0,0.25,0)
+Title.BackgroundTransparency = 1
+Title.Text = "Pulse Hub"
+Title.Font = Enum.Font.GothamBlack
+Title.TextScaled = true
+Title.TextColor3 = Color3.fromRGB(255,255,255)
+Title.Parent = Background
+
+-- Время
+local TimeLabel = Instance.new("TextLabel")
+TimeLabel.Size = UDim2.new(1,0,0,30)
+TimeLabel.Position = UDim2.new(0,0,0.40,0)
+TimeLabel.BackgroundTransparency = 1
+TimeLabel.Text = "Примерное время ожидания: 40 сек."
+TimeLabel.Font = Enum.Font.Gotham
+TimeLabel.TextScaled = true
+TimeLabel.TextColor3 = Color3.fromRGB(220,220,220)
+TimeLabel.Parent = Background
+
+-- Фон полосы
+local BarBack = Instance.new("Frame")
+BarBack.Size = UDim2.new(0.6,0,0,22)
+BarBack.Position = UDim2.new(0.2,0,0.52,0)
+BarBack.BackgroundColor3 = Color3.fromRGB(40,0,0)
+BarBack.BorderSizePixel = 0
+BarBack.Parent = Background
+
+local BackCorner = Instance.new("UICorner")
+BackCorner.CornerRadius = UDim.new(0,12)
+BackCorner.Parent = BarBack
+
+-- Полоса загрузки
+local Bar = Instance.new("Frame")
+Bar.Size = UDim2.new(0,0,1,0)
+Bar.BackgroundColor3 = Color3.fromRGB(255,35,35)
+Bar.BorderSizePixel = 0
+Bar.Parent = BarBack
+
+local BarCorner = Instance.new("UICorner")
+BarCorner.CornerRadius = UDim.new(0,12)
+BarCorner.Parent = Bar
+
+-- Красная обводка
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.fromRGB(255,70,70)
+Stroke.Thickness = 2
+Stroke.Parent = Bar
+
+-- Проценты
+local Percent = Instance.new("TextLabel")
+Percent.Size = UDim2.new(1,0,0,30)
+Percent.Position = UDim2.new(0,0,0.58,0)
+Percent.BackgroundTransparency = 1
+Percent.Text = "0%"
+Percent.Font = Enum.Font.GothamBold
+Percent.TextScaled = true
+Percent.TextColor3 = Color3.new(1,1,1)
+Percent.Parent = Background
+
+-- WARNING
+local WarningTitle = Instance.new("TextLabel")
+WarningTitle.Size = UDim2.new(1,0,0,28)
+WarningTitle.Position = UDim2.new(0,0,0.86,0)
+WarningTitle.BackgroundTransparency = 1
+WarningTitle.Text = "WARNING"
+WarningTitle.Font = Enum.Font.GothamBlack
+WarningTitle.TextScaled = true
+WarningTitle.TextColor3 = Color3.fromRGB(255,40,40)
+WarningTitle.Parent = Background
+
+local WarningText = Instance.new("TextLabel")
+WarningText.Size = UDim2.new(0.9,0,0,40)
+WarningText.Position = UDim2.new(0.05,0,0.91,0)
+WarningText.BackgroundTransparency = 1
+WarningText.Text = "Если скрипт не заработал,\nпопробуйте перезайти в игру."
+WarningText.Font = Enum.Font.Gotham
+WarningText.TextScaled = true
+WarningText.TextWrapped = true
+WarningText.TextColor3 = Color3.fromRGB(255,255,255)
+WarningText.Parent = Background
+
+-- Анимация полосы
+TweenService:Create(
+    Bar,
+    TweenInfo.new(totalTime, Enum.EasingStyle.Linear),
+    {Size = UDim2.new(1,0,1,0)}
+):Play()
+
+-- Обновление процентов и времени
+for i = totalTime, 0, -1 do
+    local progress = math.floor(((totalTime - i) / totalTime) * 100)
+
+    Percent.Text = progress .. "%"
+    TimeLabel.Text = "Примерное время ожидания: " .. i .. " сек."
+
+    task.wait(1)
+end
+
+Percent.Text = "100%"
+TimeLabel.Text = "Загрузка завершена!"
+
+task.wait(1)
+
+ScreenGui:Destroy()
